@@ -1,5 +1,6 @@
 package com.rk.pace.presentation.screens.run_stats.components
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ fun RunStatsMap(
     val coroutineScope = rememberCoroutineScope()
 
     val context = LocalContext.current
+    val darkTheme = isSystemInDarkTheme()
 
     fun moveToRun() {
         val hasPoints = segments.any {
@@ -64,7 +66,7 @@ fun RunStatsMap(
         properties = MapProperties(
             mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
                 context,
-                R.raw.map
+                if (darkTheme) R.raw.map else R.raw.map_light
             )
         ),
         onMapLoaded = {
