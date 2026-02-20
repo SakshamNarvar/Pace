@@ -1,6 +1,7 @@
 package com.rk.pace.presentation.screens.active_run.components
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +42,7 @@ fun RunMap(
 
     val cameraPositionState = rememberCameraPositionState()
     val context = LocalContext.current
+    val darkTheme = isSystemInDarkTheme()
 
     GoogleMap(
         modifier = modifier,
@@ -52,7 +54,7 @@ fun RunMap(
             isMyLocationEnabled = context.hasForegroundLocationPermission(),
             mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
                 context,
-                R.raw.map
+                if (darkTheme) R.raw.map else R.raw.map_light
             )
         ),
         onMapLoaded = {
