@@ -6,7 +6,6 @@ import com.rk.pace.common.ut.MapUt
 import com.rk.pace.common.ut.PathUt.toList
 import com.rk.pace.di.ApplicationIoCoroutineScope
 import com.rk.pace.domain.model.Run
-import com.rk.pace.domain.model.RunState
 import com.rk.pace.domain.model.RunWithPath
 import com.rk.pace.domain.tracking.TrackerManager
 import com.rk.pace.domain.use_case.run.SaveRunUseCase
@@ -25,8 +24,8 @@ class ActiveRunViewModel @Inject constructor(
     private val saveRunUseCase: SaveRunUseCase,
     private val getCurrentUserIdUseCase: GetCurrentUserIdUseCase
 ) : ViewModel() {
-    private val _runState: MutableStateFlow<RunState> = trackerManager.runState
-    val runState = _runState.asStateFlow()
+
+    val runState = trackerManager.runState
 
     val location = trackerManager.location
     val gpsStrength = trackerManager.gpsStrength
@@ -34,11 +33,11 @@ class ActiveRunViewModel @Inject constructor(
     private val _state: MutableStateFlow<RunUiState> = MutableStateFlow(RunUiState())
     val state = _state.asStateFlow()
 
-    fun onTitleChange(t: String) {
-        if (state.value.isSav) return
+    fun onTitleChange(newTitle: String) {
+        if (state.value.saving) return
         _state.update {
             it.copy(
-                title = t
+                title = newTitle
             )
         }
     }
@@ -56,10 +55,10 @@ class ActiveRunViewModel @Inject constructor(
     }
 
     fun saveRun() {
-        if (state.value.isSav) return
+        if (state.value.saving) return
         _state.update {
             it.copy(
-                isSav = true
+                saving = true
             )
         }
         scope.launch {
@@ -81,14 +80,14 @@ class ActiveRunViewModel @Inject constructor(
             saveRunUseCase(
                 RunWithPath(
                     run = run,
-                    path = path //
+                    path = path
                 )
             )
             stopRun()
             _state.update {
                 it.copy(
-                    isSaved = true,
-                    isSav = false,
+                    saved = true,
+                    saving = false,
                 )
             }
         }

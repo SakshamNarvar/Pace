@@ -49,8 +49,8 @@ fun SaveRunScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     var isMapLoaded by remember { mutableStateOf(false) }
 
-    LaunchedEffect(key1 = state.isSaved) {
-        if (state.isSaved) {
+    LaunchedEffect(key1 = state.saved) {
+        if (state.saved) {
             goBack()
         }
     }
@@ -98,9 +98,9 @@ fun SaveRunScreen(
                         onClick = {
                             viewModel.saveRun()
                         },
-                        enabled = isMapLoaded && !state.isSav,
+                        enabled = isMapLoaded && !state.saving,
                         filled = true,
-                        load = state.isSav
+                        load = state.saving
                     )
                 }
             }

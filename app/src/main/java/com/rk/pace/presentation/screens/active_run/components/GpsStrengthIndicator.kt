@@ -62,19 +62,19 @@ fun GpsStrengthIndicator(
         SignalBar(
             active = strength != GpsStrength.NONE,
             height = 6.dp,
-            activeC = color
+            color = color
         )
 
         SignalBar(
             active = strength == GpsStrength.MODERATE || strength == GpsStrength.STRONG,
             height = 10.dp,
-            activeC = color
+            color = color
         )
 
         SignalBar(
             active = strength == GpsStrength.STRONG,
             height = 14.dp,
-            activeC = color
+            color = color
         )
     }
 
@@ -85,14 +85,14 @@ fun SignalBar(
     modifier: Modifier = Modifier,
     active: Boolean,
     height: Dp,
-    activeC: Color
+    color: Color
 ) {
     Box(
         modifier = modifier
             .width(4.dp)
             .height(height)
             .background(
-                color = if (active) activeC else Gray.copy(alpha = .5f),
+                color = if (active) color else Gray.copy(alpha = .5f),
                 shape = RoundedCornerShape(0.dp)
             )
     )
