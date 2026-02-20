@@ -1,4 +1,4 @@
-package com.rk.pace.presentation
+package com.rk.pace.presentation.navigation
 
 import androidx.navigation.navDeepLink
 import kotlinx.serialization.Serializable
@@ -85,43 +85,3 @@ sealed interface Route {
     }
 
 }
-
-
-//        @Serializable
-//        data object Run : Route {
-//            val uri = "https://pace.rk.com/${this}"
-//            val deepL = listOf(
-//                navDeepLink {
-//                    uriPattern = uri
-//                }
-//            )
-//        }
-//
-//        @Serializable
-//        data object SaveRun : Route
-
-//sealed interface Root : Route {
-//
-//    @Serializable
-//    data object Auth : Root
-//
-//    @Serializable
-//    data object Top : Root
-//}
-
-/*
-bottom nav screens => home , state and in middle a large fab for start run screen
-full screens => run screen and run stats screen and auth screens
- */
-
-
-//@Serializable
-//data object Top : Root
-
-//sealed interface Top : Route {
-//    @Serializable
-//    data object Runs : Top
-//
-//    @Serializable
-//    data object Summary : Top
-//}

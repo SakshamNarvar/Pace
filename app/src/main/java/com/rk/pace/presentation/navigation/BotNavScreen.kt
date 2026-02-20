@@ -1,4 +1,4 @@
-package com.rk.pace.presentation
+package com.rk.pace.presentation.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -117,13 +117,13 @@ fun BotNavScreen(
         },
         bottomBar = {
             NavigationBar {
-                botNavList.forEach {
+                botNavList.forEach { i ->
                     NavigationBarItem(
                         onClick = {
-                            if (it.route == Route.ActiveRun.Run) {
-                                navController.navigate(it.route)
+                            if (i.route == Route.ActiveRun.Run) {
+                                navController.navigate(Route.ActiveRun.Run)
                             } else {
-                                topNavController.navigate(it.route) {
+                                topNavController.navigate(i.route) {
                                     popUpTo(Route.BotNav.Feed) {
                                         saveState = true
                                     }
@@ -134,11 +134,11 @@ fun BotNavScreen(
                         },
                         icon = {
                             Icon(
-                                imageVector = it.icon,
+                                imageVector = i.icon,
                                 contentDescription = ""
                             )
                         },
-                        selected = currentDestination?.hasRoute(it.route::class) == true
+                        selected = currentDestination?.hasRoute(i.route::class) == true
                     )
                 }
             }
@@ -168,6 +168,7 @@ fun BotNavScreen(
                     }
                 )
             }
+
             composable<Route.BotNav.Stats> {
                 StatsScreen(
                     goToRunStats = { userId, runId ->
@@ -180,6 +181,7 @@ fun BotNavScreen(
                     }
                 )
             }
+
             composable<Route.BotNav.MyProfile> {
                 UserScreen(
                     onEditClick = {
