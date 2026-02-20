@@ -1,7 +1,6 @@
 package com.rk.pace.auth.presentation
 
 import android.content.Context
-import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rk.pace.auth.domain.model.AuthResult
@@ -11,7 +10,7 @@ import com.rk.pace.auth.domain.use_case.SignOutUseCase
 import com.rk.pace.auth.domain.use_case.SignUpWithEmailUseCase
 import com.rk.pace.common.extension.restartApp
 import com.rk.pace.domain.repo.RunRepo
-import com.rk.pace.presentation.Route
+import com.rk.pace.presentation.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
@@ -126,7 +125,6 @@ class AuthViewModel @Inject constructor(
 
     fun resetPassword(email: String) {
         viewModelScope.launch {
-            //
         }
     }
 
@@ -135,7 +133,7 @@ class AuthViewModel @Inject constructor(
             signOutUseCase().fold(
                 onSuccess = {
                     resetState()
-                    restartApp(context)
+                    context.restartApp()
                 },
                 onFailure = { error ->
                     _authState.update {

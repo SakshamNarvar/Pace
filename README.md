@@ -63,7 +63,7 @@ com.rk.pace
 ### Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/pace.git
+   git clone https://github.com/kuntalavi/pace.git
    ```
 2. Open the project in Android Studio.
 3. Add your API Keys in `local.properties`:

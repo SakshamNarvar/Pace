@@ -3,16 +3,19 @@ package com.rk.pace.background.service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.rk.pace.domain.tracking.RunTrackC
+import com.rk.pace.domain.tracking.RunTrackServiceController
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class RunTrackCImp @Inject constructor(
+class RunTrackServiceControllerImp @Inject constructor(
     @param:ApplicationContext private val context: Context
-) : RunTrackC {
+) : RunTrackServiceController {
 
-    override fun startRunTrackS() {
-        Intent(context, RunTrackService::class.java).apply {
+    override fun startRunTrackService() {
+        Intent(
+            context,
+            RunTrackService::class.java
+        ).apply {
             action = RunTrackService.ACTION_START_SERVICE
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(this)
@@ -22,7 +25,13 @@ class RunTrackCImp @Inject constructor(
         }
     }
 
-    override fun stopRunTrackS() {
-        Intent(context, RunTrackService::class.java).apply(context::stopService)
+    override fun stopRunTrackService() {
+        Intent(
+            context,
+            RunTrackService::class.java
+        ).apply(
+            context::stopService
+        )
     }
+
 }

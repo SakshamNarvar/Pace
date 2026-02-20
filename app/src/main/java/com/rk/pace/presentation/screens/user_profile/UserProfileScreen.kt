@@ -207,8 +207,8 @@ fun UserProfileScreen(
                                 run = run,
                                 onClick = {
                                     onRunClick(
-                                        run.runId,
-                                        run.userId
+                                        run.userId,
+                                        run.runId
                                     )
                                 }
                             )

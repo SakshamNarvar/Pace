@@ -72,6 +72,7 @@ android {
 
 dependencies {
 
+    implementation (libs.compose.charts)
     implementation(libs.vico.compose.m3)
     implementation(libs.coil.network.okhttp)
 

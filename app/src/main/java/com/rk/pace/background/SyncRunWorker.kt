@@ -28,17 +28,17 @@ class SyncRunWorker @AssistedInject constructor(
 
             val runsToDelete = deleteRunDao.getAllDeleteRuns() //
 
-            runsToDelete.forEach { dRun ->
+            runsToDelete.forEach { deleteRun ->
                 try {
                     firestore.collection("runs")
-                        .document(dRun.runId)
+                        .document(deleteRun.runId)
                         .delete()
                         .await()
 
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                deleteRunDao.removeDeleteRun(dRun)
+                deleteRunDao.removeDeleteRun(deleteRun)
             }
 
             val unsyncedRuns = runDao.getUnsyncedRunsWithPath() //

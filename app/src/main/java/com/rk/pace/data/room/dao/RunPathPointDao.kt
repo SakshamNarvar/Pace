@@ -9,6 +9,6 @@ import com.rk.pace.data.room.entity.RunPathPointEntity
 interface RunPathPointDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRunPath(runPath: List<RunPathPointEntity>)
+    suspend fun insertRunPath(path: List<RunPathPointEntity>)
 
 }

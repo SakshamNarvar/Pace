@@ -3,10 +3,6 @@ package com.rk.pace.data.room.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-//enum class GENDER {
-//    MALE, FEMALE, OTHER
-//}
-
 @Entity(
     tableName = "users"
 )

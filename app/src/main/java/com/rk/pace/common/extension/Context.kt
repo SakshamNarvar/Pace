@@ -1,22 +1,45 @@
 package com.rk.pace.common.extension
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 
-fun restartApp(context: Context) {
-    val intent = context.packageManager
-        .getLaunchIntentForPackage(context.packageName)
+fun Context.restartApp() {
+    val intent = this.packageManager
+        .getLaunchIntentForPackage(this.packageName)
+
     intent?.addFlags(
         Intent.FLAG_ACTIVITY_NEW_TASK or
                 Intent.FLAG_ACTIVITY_CLEAR_TASK
     )
-    context.startActivity(intent)
+    this.startActivity(intent)
 }
+
+fun Activity.openAppSettings() {
+    val intent = Intent(
+        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        Uri.fromParts(
+            "package",
+            packageName,
+            null
+        )
+    )
+
+    startActivity(intent)
+}
+
+fun Context.hasPermission(permission: String) =
+    ContextCompat.checkSelfPermission(
+        this,
+        permission
+    ) == PackageManager.PERMISSION_GRANTED
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun Context.hasPostNotificationPermission() =
@@ -25,16 +48,17 @@ fun Context.hasPostNotificationPermission() =
         Manifest.permission.POST_NOTIFICATIONS
     ) == PackageManager.PERMISSION_GRANTED
 
-fun Context.hasLocationPermission() =
+fun Context.hasForegroundLocationPermission() =
     (
             ContextCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED)
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+            )
             &&
             (
                     ContextCompat.checkSelfPermission(
                         this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
+                        Manifest.permission.ACCESS_FINE_LOCATION
                     ) == PackageManager.PERMISSION_GRANTED
                     )

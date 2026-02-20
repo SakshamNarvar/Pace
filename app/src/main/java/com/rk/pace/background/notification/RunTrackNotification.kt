@@ -12,7 +12,7 @@ import androidx.core.net.toUri
 import com.rk.pace.MainActivity
 import com.rk.pace.R
 import com.rk.pace.background.service.RunTrackService
-import com.rk.pace.presentation.Route
+import com.rk.pace.presentation.navigation.Route
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -56,7 +56,7 @@ class RunTrackNotification @Inject constructor(
 
     private fun getNotificationAction(): NotificationCompat.Action {
         return NotificationCompat.Action(
-            R.drawable.ic_launcher_background,
+            R.drawable.ic_launcher_foreground,
             "Pause",
             PendingIntent.getService(
                 context,

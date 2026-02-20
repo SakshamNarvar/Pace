@@ -4,10 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Looper
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import com.rk.pace.common.extension.hasLocationPermission
+import com.rk.pace.common.extension.hasForegroundLocationPermission
 import com.rk.pace.di.ApplicationDefaultCoroutineScope
 import com.rk.pace.domain.model.RunPathPoint
 import com.rk.pace.domain.tracking.LocationTracker
@@ -32,6 +33,7 @@ class LocationTrackerImp @Inject constructor(
     @SuppressLint("MissingPermission")
     override val locationFlow: Flow<RunPathPoint> = callbackFlow {
         val callback = object : LocationCallback() {
+
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let {
                     trySend(
@@ -45,9 +47,15 @@ class LocationTrackerImp @Inject constructor(
                     )
                 }
             }
+
+            override fun onLocationAvailability(p0: LocationAvailability) {
+                super.onLocationAvailability(p0)
+
+            }
+
         }
 
-        if (context.hasLocationPermission()) {
+        if (context.hasForegroundLocationPermission()) {
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest, callback, Looper.getMainLooper()
             )

@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,8 +38,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rk.pace.common.ut.PathUt.toSegments
 import com.rk.pace.common.ut.TimestampUt.getBarDate
 import com.rk.pace.domain.model.RunWithPath
-import com.rk.pace.presentation.screens.run_stats.components.RunStatsMap
 import com.rk.pace.presentation.components.Summary
+import com.rk.pace.presentation.screens.run_stats.components.RunStatsMap
 import com.rk.pace.theme.back
 import com.rk.pace.theme.delete
 
@@ -173,7 +175,8 @@ fun SheetContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(15.dp)
     ) {
         Spacer(modifier = Modifier.height(10.dp))

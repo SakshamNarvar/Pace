@@ -21,7 +21,7 @@ import javax.inject.Inject
 class UserProfileViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getUserRunsUseCase: GetUserRunsUseCase,
-    private val isUserFollowedByCurrentUSerUseCase: IsUserFollowedByCurrentUserUseCase,
+    private val isUserFollowedByCurrentUserUseCase: IsUserFollowedByCurrentUserUseCase,
     private val followUserUseCase: FollowUserUseCase,
     private val unFollowUserUseCase: UnFollowUserUseCase,
     getCurrentUserIdUseCase: GetCurrentUserIdUseCase,
@@ -112,7 +112,7 @@ class UserProfileViewModel @Inject constructor(
             try {
                 val userDeferred = async { getUserProfileUseCase(userId) }
                 val runsDeferred = async { getUserRunsUseCase(userId) }
-                val isFollowedDeferred = async { isUserFollowedByCurrentUSerUseCase(userId) }
+                val isFollowedDeferred = async { isUserFollowedByCurrentUserUseCase(userId) }
 
                 val userResult = userDeferred.await()
                 val runs = runsDeferred.await()

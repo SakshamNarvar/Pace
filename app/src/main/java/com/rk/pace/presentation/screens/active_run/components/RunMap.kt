@@ -18,7 +18,7 @@ import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.rk.pace.R
-import com.rk.pace.common.extension.hasLocationPermission
+import com.rk.pace.common.extension.hasForegroundLocationPermission
 import com.rk.pace.common.ut.PathUt.toLatL
 import com.rk.pace.domain.model.RunPathPoint
 import com.rk.pace.theme.Red
@@ -49,7 +49,7 @@ fun RunMap(
             zoomControlsEnabled = false
         ),
         properties = MapProperties(
-            isMyLocationEnabled = context.hasLocationPermission(),
+            isMyLocationEnabled = context.hasForegroundLocationPermission(),
             mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
                 context,
                 R.raw.map

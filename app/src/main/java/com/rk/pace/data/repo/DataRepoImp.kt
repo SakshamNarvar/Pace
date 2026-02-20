@@ -13,13 +13,13 @@ import javax.inject.Inject
 class DataRepoImp @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val workManager: WorkManager,
-    private val roomDB: PaceDatabase,
+    private val paceDB: PaceDatabase,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : DataRepo {
     override suspend fun deleteUserData() = withContext(ioDispatcher) {
 
         workManager.cancelAllWork()
-        roomDB.clearAllTables()
+        paceDB.clearAllTables()
 
         context.filesDir.listFiles()?.forEach { file ->
             file.deleteRecursively()

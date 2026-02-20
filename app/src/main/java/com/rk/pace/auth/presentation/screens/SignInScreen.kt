@@ -15,7 +15,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rk.pace.auth.presentation.AuthUIState
 import com.rk.pace.auth.presentation.AuthViewModel
 import com.rk.pace.presentation.components.PaceButton
@@ -35,7 +35,7 @@ fun SignInScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    val authState by viewModel.authState.collectAsState()
+    val authState by viewModel.authState.collectAsStateWithLifecycle()
 
 
     LaunchedEffect(key1 = Unit) {
@@ -67,10 +67,7 @@ fun SignInScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center
         ) {
-            Spacer(
-                modifier = Modifier
-                    .height(20.dp)
-            )
+            Spacer(modifier = Modifier.height(20.dp))
 
             PaceInputBox(
                 value = email,
@@ -80,10 +77,7 @@ fun SignInScreen(
                 placeholder = "your@em.com",
             )
 
-            Spacer(
-                modifier = Modifier
-                    .height(20.dp)
-            )
+            Spacer(modifier = Modifier.height(20.dp))
 
             PaceInputBox(
                 value = password,
@@ -94,10 +88,7 @@ fun SignInScreen(
                 isPassword = true
             )
 
-            Spacer(
-                modifier = Modifier
-                    .height(20.dp)
-            )
+            Spacer(modifier = Modifier.height(20.dp))
 
             PaceButton(
                 modifier = Modifier.fillMaxWidth(.3f),

@@ -11,7 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.rk.pace.auth.presentation.screens.SignInScreen
 import com.rk.pace.auth.presentation.screens.SignUpScreen
 import com.rk.pace.auth.presentation.screens.WelcomeScreen
-import com.rk.pace.presentation.Route
+import com.rk.pace.presentation.navigation.Route
 
 @Composable
 fun AuthScreen(
