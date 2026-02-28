@@ -1,5 +1,8 @@
 package com.rk.pace.presentation.screens.active_run
 
+import android.Manifest
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,21 +15,28 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.rk.pace.common.extension.hasForegroundLocationPermission
 import com.rk.pace.presentation.screens.active_run.components.RunBottomSheet
 import com.rk.pace.presentation.screens.active_run.components.RunMap
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,8 +49,33 @@ fun RunScreen(
     val runState by viewModel.runState.collectAsStateWithLifecycle()
     val location by viewModel.location.collectAsStateWithLifecycle()
     val gpsStrength by viewModel.gpsStrength.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var isMapLoaded by remember { mutableStateOf(false) }
+    var hasLocationPermission by remember {
+        mutableStateOf(context.hasForegroundLocationPermission())
+    }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        hasLocationPermission =
+            permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+        if (hasLocationPermission) {
+            viewModel.startRun()
+        } else {
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    message = "Location permission is required to start a run",
+                    duration = SnackbarDuration.Short
+                )
+            }
+        }
+    }
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberStandardBottomSheetState(
@@ -54,6 +89,7 @@ fun RunScreen(
     ) {
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
+            snackbarHost = { SnackbarHost(snackbarHostState) },
             sheetContent = {
                 Box(
                     modifier = Modifier
@@ -69,7 +105,16 @@ fun RunScreen(
                         runState = runState,
                         isMapLoaded = isMapLoaded,
                         start = {
-                            viewModel.startRun()
+                            if (context.hasForegroundLocationPermission()) {
+                                viewModel.startRun()
+                            } else {
+                                locationPermissionLauncher.launch(
+                                    arrayOf(
+                                        Manifest.permission.ACCESS_FINE_LOCATION,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION
+                                    )
+                                )
+                            }
                         },
                         pause = {
                             viewModel.pauseRun()
@@ -90,31 +135,32 @@ fun RunScreen(
             sheetPeekHeight = 300.dp,
             sheetMaxWidth = Dp.Unspecified
         ) {
-            RunMap(
-                modifier = Modifier
-                    .fillMaxSize(),
-                segments = runState.segments,
-                currentLocation = location,
-                isAct = runState.isAct,
-                paused = runState.paused,
-                bottomPaddingDp = 300.dp,
-                onMapLoadedCallback = {
-                    isMapLoaded = true
-                }
-            )
-        }
+            Box(modifier = Modifier.fillMaxSize()) {
+                RunMap(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    segments = runState.segments,
+                    currentLocation = location,
+                    isAct = runState.isAct,
+                    paused = runState.paused,
+                    bottomPaddingDp = 300.dp,
+                    onMapLoadedCallback = {
+                        isMapLoaded = true
+                    }
+                )
 
-        if (!isMapLoaded) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        MaterialTheme.colorScheme.background
-                    )
-                    .zIndex(2f),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+                if (!isMapLoaded) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                MaterialTheme.colorScheme.background
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
     }

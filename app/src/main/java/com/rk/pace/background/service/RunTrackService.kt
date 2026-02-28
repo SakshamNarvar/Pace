@@ -1,6 +1,8 @@
 package com.rk.pace.background.service
 
 import android.content.Intent
+import android.content.pm.ServiceInfo
+import android.os.Build
 import android.util.Log
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
@@ -35,10 +37,18 @@ class RunTrackService : LifecycleService() {
             ACTION_START_SERVICE -> {
                 val baseNotification = notification.getBaseNotification()
                 Log.d("RunTrackingNotification", "Notification built: $baseNotification")
-                startForeground(
-                    RunTrackNotification.RUN_TRACK_NOTIFICATION_ID,
-                    baseNotification
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    startForeground(
+                        RunTrackNotification.RUN_TRACK_NOTIFICATION_ID,
+                        baseNotification,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                    )
+                } else {
+                    startForeground(
+                        RunTrackNotification.RUN_TRACK_NOTIFICATION_ID,
+                        baseNotification
+                    )
+                }
                 Log.d("RunTrackingService", "onStartCommand called with action: ${intent.action}")
 
                 if (job == null) {

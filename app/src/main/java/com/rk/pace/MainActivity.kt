@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.core.app.ActivityCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.rk.pace.auth.presentation.AuthViewModel
+import com.rk.pace.common.extension.hasForegroundLocationPermission
 import com.rk.pace.common.extension.hasPostNotificationPermission
 import com.rk.pace.presentation.navigation.NavGraph
 import com.rk.pace.theme.PaceTheme
@@ -28,14 +29,25 @@ class MainActivity : ComponentActivity() {
             authViewModel.startDestination.value == null
         }
 
+        val permissionsToRequest = mutableListOf<String>()
+
+        if (!this.hasForegroundLocationPermission()) {
+            permissionsToRequest.add(android.Manifest.permission.ACCESS_FINE_LOCATION)
+            permissionsToRequest.add(android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (!this.hasPostNotificationPermission()) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                    101
-                )
+                permissionsToRequest.add(android.Manifest.permission.POST_NOTIFICATIONS)
             }
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toTypedArray(),
+                101
+            )
         }
 
         enableEdgeToEdge()

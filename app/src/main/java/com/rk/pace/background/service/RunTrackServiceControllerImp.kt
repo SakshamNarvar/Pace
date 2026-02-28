@@ -3,6 +3,7 @@ package com.rk.pace.background.service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import com.rk.pace.domain.tracking.RunTrackServiceController
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -12,16 +13,20 @@ class RunTrackServiceControllerImp @Inject constructor(
 ) : RunTrackServiceController {
 
     override fun startRunTrackService() {
-        Intent(
-            context,
-            RunTrackService::class.java
-        ).apply {
-            action = RunTrackService.ACTION_START_SERVICE
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(this)
-            } else {
-                context.startService(this)
+        try {
+            Intent(
+                context,
+                RunTrackService::class.java
+            ).apply {
+                action = RunTrackService.ACTION_START_SERVICE
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    context.startForegroundService(this)
+                } else {
+                    context.startService(this)
+                }
             }
+        } catch (e: Exception) {
+            Log.e("RunTrackService", "Failed to start foreground service: ${e.message}", e)
         }
     }
 
