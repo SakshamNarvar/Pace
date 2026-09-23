@@ -32,14 +32,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rk.pace.domain.model.Run
 import com.rk.pace.domain.model.RunState
 import com.rk.pace.presentation.components.ButtonVariant
 import com.rk.pace.presentation.components.PaceButton
-import com.rk.pace.presentation.components.PaceInputBox
-import com.rk.pace.presentation.components.Summary
+import com.rk.pace.presentation.components.PaceTextInput
 import com.rk.pace.presentation.screens.run_stats.components.RunStatsMap
+import com.rk.pace.presentation.screens.stats.components.PaceStat
 import com.rk.pace.presentation.theme.delete
+import com.rk.pace.presentation.theme.space
+import com.rk.pace.presentation.ut.FormatUt.formatDistance
+import com.rk.pace.presentation.ut.FormatUt.formatDuration
+import com.rk.pace.presentation.ut.FormatUt.formatPace
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -147,7 +150,7 @@ fun SaveRunScreen(
                     }
                 )
 
-                PaceInputBox(
+                PaceTextInput(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp),
@@ -162,19 +165,51 @@ fun SaveRunScreen(
                     placeholder = "TITLE"
                 )
 
-                Summary(
-                    run = Run(
-                        userId = "",
-                        timestamp = runState.timestamp,
-                        distanceMeters = runState.distanceMeters,
-                        durationMilliseconds = runState.durationMilliseconds,
-                        avgSpeedMps = runState.avgSpeedMps,
-                        encodedPath = emptyList(),
-                        title = state.runTitle,
-                        likes = 0,
-                        likedBy = emptyList()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space.medium
+                    )
+                ) {
+                    PaceStat(
+                        modifier = Modifier.weight(1f),
+                        title = "DISTANCE",
+                        value = formatDistance(runState.distanceMeters),
+                        unit = "KM"
+                    )
+                    PaceStat(
+                        modifier = Modifier.weight(1f),
+                        title = "TIME",
+                        value = formatDuration(runState.durationMilliseconds)
+                    )
+                }
+
+                Spacer(
+                    modifier = Modifier.height(
+                        space.large
                     )
                 )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space.medium
+                    )
+                ) {
+                    PaceStat(
+                        modifier = Modifier.weight(1f),
+                        title = "AVG PACE",
+                        value = formatPace(runState.avgSpeedMps),
+                        unit = "/KM"
+                    )
+                    PaceStat(
+                        modifier = Modifier.weight(1f),
+                        title = "AVG SPEED",
+                        value = "%.2f".format(runState.avgSpeedMps),
+                        unit = "MPS"
+                    )
+                }
+
             }
         }
         if (!mapLoaded) {

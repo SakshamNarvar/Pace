@@ -7,89 +7,125 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rk.pace.domain.model.PacePoint
-import com.rk.pace.domain.model.RunWithPath
+import com.rk.pace.domain.model.Run
 import com.rk.pace.domain.model.Split
-import com.rk.pace.presentation.charts.PaceChart
 import com.rk.pace.presentation.charts.SplitChart
-import com.rk.pace.presentation.components.PaceStatCard
+import com.rk.pace.presentation.screens.stats.components.PaceStat
+import com.rk.pace.presentation.theme.space
 import com.rk.pace.presentation.ut.FormatUt.formatDistance
 import com.rk.pace.presentation.ut.FormatUt.formatDuration
 import com.rk.pace.presentation.ut.FormatUt.formatPace
-import kotlin.text.ifEmpty
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SheetContent(
-    run: RunWithPath,
+    run: Run,
     splits: List<Split>,
     paceChartData: List<PacePoint>
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(15.dp)
+            .statusBarsPadding()
+            .padding(
+                horizontal = space.large
+            )
+            .verticalScroll(rememberScrollState())
     ) {
-        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
-            text = run.run.title.uppercase().ifEmpty { "RUNNING" },
+            text = run.title.uppercase().ifEmpty { "RUNNING" },
             fontSize = 24.sp,
             fontWeight = FontWeight.Medium,
             letterSpacing = 1.sp
         )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            PaceStatCard(
-                label = "DISTANCE",
-                value = formatDistance(run.run.distanceMeters),
-                unit = "KM",
-                modifier = Modifier.weight(1f)
+        Spacer(
+            modifier = Modifier.height(
+                space.large
             )
-            PaceStatCard(
-                label = "TIME",
-                value = formatDuration(run.run.durationMilliseconds),
-                unit = "",
-                modifier = Modifier.weight(1f)
-            )
-        }
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            PaceStatCard(
-                label = "AVG PACE",
-                value = formatPace(run.run.avgSpeedMps),
-                unit = "/KM",
-                modifier = Modifier.weight(1f)
+            horizontalArrangement = Arrangement.spacedBy(
+                space.medium
             )
-            PaceStatCard(
-                label = "AVG SPEED",
-                value = "%.2f".format(run.run.avgSpeedMps),
-                unit = "MPS",
-                modifier = Modifier.weight(1f)
+        ) {
+            PaceStat(
+                modifier = Modifier.weight(1f),
+                title = "DISTANCE",
+                value = formatDistance(run.distanceMeters),
+                unit = "KM"
+            )
+            PaceStat(
+                modifier = Modifier.weight(1f),
+                title = "TIME",
+                value = formatDuration(run.durationMilliseconds)
             )
         }
+
+        Spacer(
+            modifier = Modifier.height(
+                space.large
+            )
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(
+                space.medium
+            )
+        ) {
+            PaceStat(
+                modifier = Modifier.weight(1f),
+                title = "AVG PACE",
+                value = formatPace(run.avgSpeedMps),
+                unit = "/KM"
+            )
+            PaceStat(
+                modifier = Modifier.weight(1f),
+                title = "AVG SPEED",
+                value = "%.2f".format(run.avgSpeedMps),
+                unit = "MPS"
+            )
+        }
+
+        Spacer(
+            modifier = Modifier.height(
+                space.medium
+            )
+        )
 
         SplitChart(
             splits
         )
 
-        PaceChart(
-            data = paceChartData
+        Spacer(
+            modifier = Modifier.height(
+                space.medium
+            )
         )
+
+//        PaceChart(
+//            data = paceChartData
+//        )
+
+//        Spacer(
+//            modifier = Modifier.height(
+//                space.large
+//            )
+//        )
+
     }
 }

@@ -1,37 +1,31 @@
 package com.rk.pace.presentation.screens.stats
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.rk.pace.presentation.components.PaceStatCard
 import com.rk.pace.presentation.screens.stats.components.DistanceCard
-import com.rk.pace.presentation.screens.stats.components.GoalsPager
+import com.rk.pace.presentation.screens.stats.components.PaceStat
 import com.rk.pace.presentation.screens.stats.components.WeekNavigator
+import com.rk.pace.presentation.theme.space
 import com.rk.pace.presentation.ut.FormatUt.formatDistance
 import com.rk.pace.presentation.ut.FormatUt.formatDuration
 import com.rk.pace.presentation.ut.FormatUt.formatPace
-import com.rk.pace.presentation.theme.Black
-import com.rk.pace.presentation.theme.add
+import com.rk.pace.presentation.ut.ObserveAsEvents
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun StatsScreen(
     modifier: Modifier = Modifier,
@@ -40,16 +34,18 @@ fun StatsScreen(
     onGoalClick: () -> Unit
 ) {
 
-    val weekDistanceChartData by viewModel.weekDistanceChartData.collectAsStateWithLifecycle()
-    val weekStats by viewModel.weekStats.collectAsStateWithLifecycle()
-    val weekLabel by viewModel.weekLabel.collectAsStateWithLifecycle()
-    val canGoForward by viewModel.canGoForward.collectAsStateWithLifecycle()
-    val weekGoalsProgress by viewModel.weekGoalsProgress.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val (runGoalProgress, distanceGoalProgress, durationGoalProgress) = weekGoalsProgress
+    ObserveAsEvents(viewModel.events) { event ->
+        when (event) {
+            is StatsEvent.GoToAddGoal -> onAddGoalClick()
+            is StatsEvent.GoToGoal -> onGoalClick()
+            else -> {}
+        }
+    }
 
-    val isAnyGoalSet = runGoalProgress.isSet || distanceGoalProgress.isSet || durationGoalProgress.isSet
-    val areAllGoalsSet = runGoalProgress.isSet && distanceGoalProgress.isSet && durationGoalProgress.isSet
+    val weekStats = state.data.weekStats
+    val weekDistanceChartData = state.data.weekDistanceChartData
 
     Box(
         modifier = modifier.fillMaxSize()
@@ -58,15 +54,15 @@ fun StatsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp, vertical = 15.dp)
-                .verticalScroll(rememberScrollState()),
-//            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .padding(
+                    space.medium
+                )
+                .verticalScroll(rememberScrollState())
         ) {
             WeekNavigator(
-                weekLabel = weekLabel,
-                canGoForward = canGoForward,
-                onPrevious = { viewModel.goToPreviousWeek() },
-                onNext = { viewModel.goToNextWeek() }
+                weekLabel = state.weekLabel,
+                canGoForward = state.canGoForward,
+                onAction = viewModel::onAction
             )
 
             DistanceCard(
@@ -75,64 +71,32 @@ fun StatsScreen(
             )
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = space.medium,
+                        vertical = space.large
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                PaceStatCard(
-                    label = "AVG PACE",
+                PaceStat(
+                    title = "AVG PACE",
                     value = formatPace(weekStats.avgSpeedMps),
-                    unit = "/KM",
-                    modifier = Modifier.weight(1f)
+                    unit = "/KM"
                 )
-                PaceStatCard(
-                    label = "TOTAL TIME",
-                    value = formatDuration(weekStats.durationMilliseconds),
-                    unit = "",
-                    modifier = Modifier.weight(1f)
+
+                PaceStat(
+                    title = "DURATION",
+                    value = formatDuration(weekStats.durationMilliseconds)
+                )
+
+                Spacer(
+                    modifier =
+                        Modifier.width(0.dp)
                 )
             }
 
-            if (isAnyGoalSet) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "YOUR GOALS",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-
-                    IconButton(
-                        onClick = { onAddGoalClick() },
-                        enabled = !areAllGoalsSet
-                    ) {
-                        Icon(
-                            imageVector = add,
-                            contentDescription = null,
-                            tint = if (areAllGoalsSet) MaterialTheme.colorScheme.background else Black
-                        )
-                    }
-                }
-
-                GoalsPager(
-                    weekGoalsProgress = weekGoalsProgress,
-                    onGoalClick = { onGoalClick() }
-                )
-
-            } else {
-                Text(
-                    text = "MAKE A GOAL",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                IconButton(
-                    onClick = { onAddGoalClick() }
-                ) {
-                    Icon(
-                        imageVector = add,
-                        contentDescription = null
-                    )
-                }
-            }
         }
 
     }

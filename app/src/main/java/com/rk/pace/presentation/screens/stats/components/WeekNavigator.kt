@@ -5,21 +5,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.rk.pace.presentation.screens.stats.StatsAction
 import com.rk.pace.presentation.theme.Black
-import com.rk.pace.presentation.theme.arrowRight
 import com.rk.pace.presentation.theme.arrowLeft
+import com.rk.pace.presentation.theme.arrowRight
+import com.rk.pace.presentation.theme.scheme
+import com.rk.pace.presentation.theme.tvpo
 
 @Composable
 fun WeekNavigator(
     weekLabel: String,
     canGoForward: Boolean,
-    onPrevious: () -> Unit,
-    onNext: () -> Unit,
+    onAction: (StatsAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -28,7 +29,11 @@ fun WeekNavigator(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(
-            onClick = onPrevious
+            onClick = {
+                onAction(
+                    StatsAction.OnPreviousWeekClick
+                )
+            }
         ) {
             Icon(
                 imageVector = arrowLeft,
@@ -38,17 +43,21 @@ fun WeekNavigator(
 
         Text(
             text = weekLabel,
-            style = MaterialTheme.typography.titleSmall
+            style = tvpo.titleSmall
         )
 
         IconButton(
-            onClick = onNext,
+            onClick = {
+                onAction(
+                    StatsAction.OnNextWeekClick
+                )
+            },
             enabled = canGoForward
         ) {
             Icon(
                 imageVector = arrowRight,
                 contentDescription = null,
-                tint = if (!canGoForward) MaterialTheme.colorScheme.background else Black
+                tint = if (!canGoForward) scheme.background else Black
             )
         }
     }
